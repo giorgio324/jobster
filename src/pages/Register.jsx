@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import { Logo, FormRow } from '../components/index';
 import Wrapper from '../assets/wrappers/RegisterPage';
 import { toast } from 'react-toastify';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { loginUser, registerUser } from '../features/user/userSlice';
+
 const initialState = {
   name: '',
   email: '',
@@ -11,20 +15,41 @@ const initialState = {
 
 const Register = () => {
   const [values, setValues] = useState(initialState);
+
+  const { isLoading, user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setValues({ ...values, [name]: value });
   };
-  const toggleMember = () => {
-    setValues({ ...values, isMember: !values.isMember });
-  };
+
   const onSubmit = (e) => {
     e.preventDefault();
     const { name, email, password, isMember } = values;
     if (!email || !password || (!isMember && !name)) {
       toast.error('Please fill all fields');
+      return;
     }
+    if (isMember) {
+      dispatch(loginUser({ email, password }));
+      return;
+    }
+    dispatch(registerUser({ name, email, password }));
   };
+
+  const toggleMember = () => {
+    setValues({ ...values, isMember: !values.isMember });
+  };
+
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
   return (
     <Wrapper className='full-page'>
       <form className='form' onSubmit={onSubmit}>
@@ -55,8 +80,8 @@ const Register = () => {
           labelText='password'
         />
         <div className='form-row'></div>
-        <button type='submit' className='btn btn-block'>
-          submit
+        <button type='submit' className='btn btn-block' disabled={isLoading}>
+          {isLoading ? 'Loading...' : 'Submit'}
         </button>
         <p>
           {values.isMember ? 'Not a member ?' : 'Already a member?'}

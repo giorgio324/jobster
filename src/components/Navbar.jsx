@@ -14,7 +14,7 @@ const Navbar = () => {
   };
 
   const logout = () => {
-    dispatch(logoutUser());
+    dispatch(logoutUser('logging out...'));
   };
   // this handles logout dropdown
   const [showLogout, setShowLogout] = useState(false);

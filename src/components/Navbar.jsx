@@ -3,7 +3,8 @@ import Logo from './Logo';
 import { FaAlignLeft, FaUserCircle, FaCaretDown } from 'react-icons/fa';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { logoutUser, toggleSidebar } from '../features/user/userSlice';
+import { clearStore, toggleSidebar } from '../features/user/userSlice';
+
 const Navbar = () => {
   // this handles the user from slice and local storage plus the sidebar toggle
   const { user } = useSelector((store) => store.user);
@@ -14,7 +15,7 @@ const Navbar = () => {
   };
 
   const logout = () => {
-    dispatch(logoutUser('logging out...'));
+    dispatch(clearStore('logging out...'));
   };
   // this handles logout dropdown
   const [showLogout, setShowLogout] = useState(false);

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
-import customFetch from '../../utils/axios';
+import customFetch, { checkForAuthorizedResponse } from '../../utils/axios';
 import {
   addUserToLocalStorage,
   getUserFromLocalStorage,
@@ -49,14 +49,7 @@ export const updateUser = createAsyncThunk(
       });
       return resp.data;
     } catch (error) {
-      console.log(error);
-      if (error.response.status === 401) {
-        thunkAPI.dispatch(logoutUser());
-        return thunkAPI.rejectWithValue(
-          'token expired or an error has occured please login again'
-        );
-      }
-      return thunkAPI.rejectWithValue(error.response.data.msg);
+      return checkForAuthorizedResponse(error, thunkAPI);
     }
   }
 );
